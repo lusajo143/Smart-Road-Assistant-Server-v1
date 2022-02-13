@@ -1,0 +1,15 @@
+{
+  "name": "smart",
+  "version": "1.0.0",
+  "description": "API server for android Smart Road Assistance",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lusajo Shitindi",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.2",
+    "mysql": "^2.18.1"
+  }
+}
