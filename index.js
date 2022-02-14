@@ -97,9 +97,87 @@ app.post('/api/v1/setLocation', (req, res) => {
                     res.json({ status: 'success' })
                 })
         } else {
-            res.json({ status: 'Failed', message: 'No user with username = '+username})
+            res.json({ status: 'Failed', message: 'No user with username = ' + username })
         }
     })
+})
+
+
+app.post('/api/v1/getMechanicData', (req, res) => {
+    let username = req.body.username
+
+    con.query('select * from users where username=?;', [username],
+        (err, rows, fields) => {
+            if (err) throw new Error(err)
+
+            if (rows.length != 0) {
+                let response = {
+                    status: 'success',
+                    fullname: rows[0].fullName,
+                    email: rows[0].email
+                }
+
+                // Get location
+                con.query('select * from locations where username=?', [username],
+                    (Err, Rows, Fields) => {
+                        if (Err) throw new Error(Err)
+
+                        if (Rows.length != 0) {
+                            response.lat = Rows[0].lat
+                            response.lng = Rows[0].lng
+                        } else {
+                            response.lat = 'null'
+                            response.lng = 'null'
+                        }
+
+                        res.json(response)
+                    })
+            } else {
+                res.json({ status: 'Failed', message: 'No user with username = ' + username })
+            }
+
+
+        })
+})
+
+
+app.post('/api/v1/getOwnerData', (req, res) => {
+    let username = req.body.username
+
+    con.query('select * from users where username=?', [username], (err, rows, fields) => {
+        if (err) throw new Error(err)
+
+        res.json({ status: 'success', fullname: rows[0].fullName})
+    })
+})
+
+
+app.get('/api/v1/getMechanics', (req, res) => {
+    
+    con.query("SELECT * FROM `users` INNER JOIN locations where users.username = locations.username;", (err, rows, fields) => {
+        if (err) throw new Error(err)
+
+        let response = {
+            status: 'success',
+            Mechanics: new Array()
+        }
+
+        for (let index = 0; index < rows.length; index++) {
+            const mechanic = rows[index];
+            // Fetch lat and lng
+            let fullname = mechanic.fullName
+            let email = mechanic.email
+            response.Mechanics.push({
+                fullname,
+                email,
+                lat: mechanic.lat,
+                lng: mechanic.lng
+            })
+        }
+
+        res.json(response)
+    })
+
 })
 
 app.listen(5000, () => console.log("Server is listening at 5000"))
