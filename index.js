@@ -47,8 +47,6 @@ app.post('/api/v1/setEmail', (req, res) => {
     let username = req.body.username
     let email = req.body.email
 
-    console.log("hit");
-
     con.query('update users set email=? where username=?', [
         email, username
     ], (err, rows, fields) => {
